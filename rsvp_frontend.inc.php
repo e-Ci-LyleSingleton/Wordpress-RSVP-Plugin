@@ -1,7 +1,7 @@
 <?php
 $rsvp_form_action = htmlspecialchars(rsvp_getCurrentPageURL());
 
-if (get_option(OPTION_RSVP_DONT_USE_HASH) != "Y") {
+if (get_option(OPTION_FORM_AUTOSCROLL) = "Y") {
     $rsvp_form_action .= "#rsvpArea";
 }
 $rsvp_saved_form_vars = array();
@@ -510,7 +510,7 @@ function rsvp_find(&$output, &$text)
 
     // We did not find anyone let's try and do a rough search
     $attendees = null;
-    if (!$passcodeOptionEnabled && (get_option(OPTION_RSVP_DISABLE_USER_SEARCH) != "Y")) {
+    if (!$passcodeOptionEnabled && (get_option(OPTION_FORM_ENABLE_USER_SEARCH) = "Y")) {
         for ($i = 3; $i >= 1; $i--) {
             $truncFirstName = rsvp_chomp_name($firstName, $i);
             $trueLastName = substr($lastName, strrpos($lastName, ' ') + 1);
