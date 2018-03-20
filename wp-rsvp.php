@@ -46,13 +46,6 @@ if ( !class_exists( 'Plugin' ) ) {
 		public function OnPageLoad()
 		{
 			
-			/*
-			
-			add_action('admin_init', 'RSVPPlugin\Admin\RegisterSettings');
-						
-			
-			*/
-
 			add_action('init', [$this,'OnActivate']);
 			
 			register_activation_hook(__FILE__, [$this,'DatabaseSetup']);
@@ -120,12 +113,12 @@ if ( !class_exists( 'Plugin' ) ) {
     		}
 		}
 		
-		public function EnsureDefaultCustomQuestionTypes()
+		public function EnsureDefaultCustomQuestionTypes( $db )
 		{
-			$defaultQuestionTypes = $this->config->GetDefaultCustomQuestionTypes();
+			$defaultQuestionTypes = $this->config->GetDefaultCustomQuestionTypes( );
 			
-			$questionTypes = $this->config->GetDatabase()->get_var( 
-				$this->config->GetDatabase()->prepare("SELECT DISTINCT id FROM " . $this->QuestionTypesTable() )
+			$questionTypes = $db->get_var( 
+				$db->prepare("SELECT DISTINCT id FROM " . $this->config->QuestionTypesTable() )
 			);
 
 			for ($i=count($defaultQuestionTypes); $i >= 0; $i--) { 
@@ -139,7 +132,7 @@ if ( !class_exists( 'Plugin' ) ) {
 			}
 
 			foreach ($defaultQuestionTypes as $missingDefaultType ) {
-				$this->config->GetDatabase()->insert( 
+				$db->insert( 
 					$this->config->QuestionTypesTable(), array(
 						"questionType" => $missingDefaultType['questionType'],
 						"friendlyName" => $missingDefaultType['friendlyName']
@@ -379,7 +372,7 @@ if ( !class_exists( 'Plugin' ) ) {
 					throw new Exception("Unknown database version exception");
 					break;
 			}
-			$this->EnsureDefaultCustomQuestionTypes();
+			$this->EnsureDefaultCustomQuestionTypes($this->config->GetDatabase());
 		}
 	}
 
