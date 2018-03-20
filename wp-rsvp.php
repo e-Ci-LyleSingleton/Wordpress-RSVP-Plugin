@@ -207,7 +207,6 @@ if ( !class_exists( 'Plugin' ) ) {
 				$db->query($sql);
 			} 
 			
-
 			$table = $this->config->QuestionAnswersTable();
 			if ($db->get_var("SHOW TABLES LIKE '$table'") != $table) {
 				$sql = "CREATE TABLE $table (
@@ -217,6 +216,18 @@ if ( !class_exists( 'Plugin' ) ) {
 				);";
 				$db->query($sql);
 			}
+			
+			$table = $this->config->AttendeeAnswersTable();
+			if ($db->get_var("SHOW TABLES LIKE '$table'") != $table) {
+				$sql = "CREATE TABLE $table (
+				`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+				`questionID` INT NOT NULL, 
+				`answer` MEDIUMTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL, 
+				`attendeeID` INT NOT NULL 
+				);";
+				$db->query($sql);
+			}
+
 
 			$table = $this->config->QuestionAttendeesTable();
 			if ($db->get_var("SHOW TABLES LIKE '$table'") != $table) {
