@@ -72,7 +72,7 @@ function rsvp_database_update_attendees_details_by_id(
             if( $details['attendance'] != '' )
             {
                 $insertValues['attendance'] = $details['attendance'];
-                array_push( $insertFormat, '%s' );
+                array_push( $insertFormat, '%d' );
             }
             else
             {

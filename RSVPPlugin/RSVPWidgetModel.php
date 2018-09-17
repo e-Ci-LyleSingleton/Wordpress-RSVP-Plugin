@@ -133,20 +133,6 @@ class RSVPWidgetModel
         {
             $model->SetFirstName( trim( $_REQUEST['firstName'] ) );
         }
-        
-        if( isset($_REQUEST['selectedAttendee']) )
-        {
-            try
-            {
-                list($encrypted_data, $iv) = explode('::', base64_decode($_REQUEST['selectedAttendee']), 2);
-                $selectedAttendee = openssl_decrypt($encrypted_data, 'aes-256-cbc', RSVPConfig::CIPHER_KEY, 0, $iv);
-                $model->SetAttendeeId($selectedAttendee);
-            }
-            catch( Exception $ex )
-            {
-                $model->SetError( 'selectedAttendee', 'Your session has expired' );
-            }
-        }
 
         if( isset($_REQUEST['lastName']) )
         {
@@ -163,7 +149,7 @@ class RSVPWidgetModel
             }
             catch( Exception $ex )
             {
-                $model->SetError( 'authId', 'Your session has expired' );
+                $model->SetError( 'accessToken', 'Your session has expired' );
             }
         }
 

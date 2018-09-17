@@ -7,6 +7,15 @@ function rsvp_widget_has_errors( $errors )
     return count( $errors ) != 0; 
 }
 
+function rsvp_widget_has_auth_errors( $errors )
+{
+    if( isset( $errors['accessToken'] ) || isset( $errors['authCtx'] ) || isset( $errors['nonce'] ) )
+    {
+        return true;
+    }
+    return false;
+}
+
 function rsvp_widget_apply_attendee_details_to_request( $attendeeDetails, $request )
 {
     $request->SetAttendance( rsvp_database_coerce_null_to_string( $attendeeDetails->attendance ) );
@@ -79,7 +88,7 @@ function rsvp_widget_preauth_validate( $request )
     $nonceVal = $request->GetOtherAttribute($nonceName);
     if( !wp_verify_nonce( $nonceVal, $nonceAction ) )
     {
-        $request->SetError('sessiontoken', 'Your session has expired');
+        $request->SetError('nonce', 'Your session has expired');
     }
 
     if( strlen( $request->GetFirstName() ) < 2 )
@@ -130,7 +139,7 @@ function rsvp_widget_attendance_validate( $request )
     $nonceVal = $request->GetOtherAttribute($nonceName);
     if( !wp_verify_nonce( $nonceVal, $nonceAction ) )
     {
-        $request->SetError('sessiontoken', 'Your session has expired');
+        $request->SetError('nonce', 'Your session has expired');
     }
     
     if( strlen( $request->GetFirstName() ) < 2 )
@@ -302,12 +311,12 @@ function rsvp_widget_process_apply_contact_details( $request )
     $nonceVal = $request->GetOtherAttribute($nonceName);
     if( !wp_verify_nonce( $nonceVal, $nonceAction ) )
     {
-        $request->SetError('sessiontoken', 'Your session has expired');
+        $request->SetError('nonce', 'Your session has expired');
     }
 
     if( $request->GetAuthId() == $request->GetAttendeeId() )
     {
-        $request->SetError('authCtx', 'You cannot apply your own contact details to yourself, silly!');
+        $request->SetError('attendeeId', 'You cannot apply your own contact details to yourself, silly!');
     }
     
     if( !rsvp_widget_has_errors( $request->GetErrors() ) )
@@ -337,11 +346,15 @@ function rsvp_widget_process_apply_contact_details( $request )
             }
         }
 
-        if( $currentUserAttendanceDetails === null || $attendeeDetails === null )
+        if( $currentUserAttendanceDetails === null )
+        {
+            $request->SetError('accessToken', 'Your session has expired');
+        }
+        else if ( $attendeeDetails === null )
         {
             $request->SetError('authCtx', 'Your session has expired');
         }
-        else 
+        else
         {
             if( !rsvp_database_update_attendees_details_by_id( 
                 $request->GetAttendeeId(), 
@@ -377,7 +390,7 @@ function rsvp_widget_process_party_member_select( $request )
     $nonceVal = $request->GetOtherAttribute($nonceName);
     if( !wp_verify_nonce( $nonceVal, $nonceAction ) )
     {
-        $request->SetError('sessiontoken', 'Your session has expired');
+        $request->SetError('nonce', 'Your session has expired');
     }
     
     if( !rsvp_widget_has_errors( $request->GetErrors() ) )
@@ -497,10 +510,17 @@ function rsvp_widget_process_action_recursive($request)
                 {
                     $request->SetAction(RSVPWidgetState::AllDoneSingle);
                 }
-            } 
+            }
             else 
             {
-                $request->SetAction(RSVPWidgetState::EnterAttendance);
+                if( rsvp_widget_has_auth_errors( $request->GetErrors() ) )
+                {
+                    $request->SetAction(RSVPWidgetState::PreAuth);
+                }
+                else
+                {
+                    $request->SetAction(RSVPWidgetState::EnterAttendance);
+                }
             }
             break;
         case RSVPWidgetState::ProcessPartyMemberAttendance:
@@ -510,17 +530,32 @@ function rsvp_widget_process_action_recursive($request)
             }
             else
             {
-                $request->SetAction(RSVPWidgetState::SelectPartyMember);
+                if( rsvp_widget_has_auth_errors( $request->GetErrors() ) )
+                {
+                    $request->SetAction(RSVPWidgetState::PreAuth);
+                }
+                else
+                {
+                    $request->SetAction(RSVPWidgetState::SelectPartyMember);
+                }
             }
             break;
         case RSVPWidgetState::ProcessApplyContactDetails:
             if( rsvp_widget_process_apply_contact_details( $request ) )
             {
                 $request->SetSuccess( 'contactDetails', 'Your changes have been saved' );
+                $request->SetAction(RSVPWidgetState::SelectPartyMember);
             }
             else
             {
-                $request->SetAction(RSVPWidgetState::SelectPartyMember);
+                if( rsvp_widget_has_auth_errors( $request->GetErrors() ) )
+                {
+                    $request->SetAction(RSVPWidgetState::PreAuth);
+                }
+                else
+                {
+                    $request->SetAction(RSVPWidgetState::SelectPartyMember);
+                }
             }
             break;
         case RSVPWidgetState::ProcessAllDoneSingle:
@@ -530,7 +565,14 @@ function rsvp_widget_process_action_recursive($request)
             }
             else
             {
-                $request->SetAction(RSVPWidgetState::EnterAttendance);
+                if( rsvp_widget_has_auth_errors( $request->GetErrors() ) )
+                {
+                    $request->SetAction(RSVPWidgetState::PreAuth);
+                }
+                else
+                {
+                    $request->SetAction(RSVPWidgetState::EnterAttendance);
+                }
             }
             break;
         case RSVPWidgetState::ProcessAllDoneParty:
@@ -540,7 +582,14 @@ function rsvp_widget_process_action_recursive($request)
             }
             else
             {
-                $request->SetAction(RSVPWidgetState::EnterAttendance);
+                if( rsvp_widget_has_auth_errors( $request->GetErrors() ) )
+                {
+                    $request->SetAction(RSVPWidgetState::PreAuth);
+                }
+                else
+                {
+                    $request->SetAction(RSVPWidgetState::EnterAttendance);
+                }
             }
             break;
         case RSVPWidgetState::EnterAttendance:
