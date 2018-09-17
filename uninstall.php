@@ -4,7 +4,7 @@
  * @package wedding-rsvp
  * @subpackage  Uninstall
  * @author Lyle Singleton
- * @version 0.0.3
+ * @version 0.0.4
  * @license: GPL
  */
 // To allow people to rsvp, create a new page or post and add "[wedding-rsvp-form]" to the text

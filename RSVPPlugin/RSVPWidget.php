@@ -467,10 +467,21 @@ function rsvp_widget_process_action_recursive($request)
         case RSVPWidgetState::ProcessAuth:
             if( rsvp_widget_preauth_validate( $request ) )
             {
-                $request->SetAction(RSVPWidgetState::EnterAttendance);
-                break;
+                $associatedAttendees = rsvp_database_count_associated_attendees_details_by_id( $request->GetAttendeeId() );
+
+                if( $associatedAttendees[0]->count > 1 )
+                {
+                    $request->SetAction(RSVPWidgetState::SelectPartyMember);
+                }
+                else
+                {
+                    $request->SetAction(RSVPWidgetState::EnterAttendance);
+                }
             }
-            $request->SetAction(RSVPWidgetState::PreAuth);
+            else
+            {
+                $request->SetAction(RSVPWidgetState::PreAuth);
+            }
             break;
         case RSVPWidgetState::ProcessAttendance:
             if( rsvp_widget_attendance_validate( $request ) )
@@ -507,7 +518,10 @@ function rsvp_widget_process_action_recursive($request)
             {
                 $request->SetSuccess( 'contactDetails', 'Your changes have been saved' );
             }
-            $request->SetAction(RSVPWidgetState::SelectPartyMember);
+            else
+            {
+                $request->SetAction(RSVPWidgetState::SelectPartyMember);
+            }
             break;
         case RSVPWidgetState::ProcessAllDoneSingle:
             if( rsvp_widget_process_single_all_done( $request ) )
