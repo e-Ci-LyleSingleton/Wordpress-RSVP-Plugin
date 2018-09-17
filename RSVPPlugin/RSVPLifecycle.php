@@ -1,16 +1,23 @@
 <?php
 
-require_once('RSVPConfig.php');
+require_once( 'RSVPConfig.php');
+require_once( 'Client/RSVPWidget.php' );
+require_once( 'Admin/RSVPAdmin.php' );
 
 function rsvp_lifecycle_register_plugin()
 {
     add_action('init', 'rsvp_lifecycle_init');
+    rsvp_widget_register( RSVPConfig::SHORTCODE_TAG );
+    rsvp_admin_register();
+
 }
 
 function rsvp_lifecycle_init()
 {    
     wp_register_style( 'w3_css_4', plugins_url("rsvp/assets/css/w3.css", "rsvp") );
-    wp_register_style('font_awesome_5_3_1', "//use.fontawesome.com/releases/v5.3.1/css/all.css");    
+    wp_register_style( 'font_awesome_5_3_1', '//use.fontawesome.com/releases/v5.3.1/css/all.css' );
+    wp_register_style( 'datatables_vanilla_1_6_15', '//cdn.jsdelivr.net/npm/vanilla-datatables@latest/dist/vanilla-dataTables.min.css' );
+    wp_register_script( 'datatables_vanilla_1_6_15', '//cdn.jsdelivr.net/npm/vanilla-datatables@latest/dist/vanilla-dataTables.min.js' );
 }
 
 function rsvp_database_v1_upgrade($db)
@@ -20,6 +27,8 @@ function rsvp_database_v1_upgrade($db)
         $sql = "CREATE TABLE `$table` (
             `partyId` int(11) NOT NULL AUTO_INCREMENT,
             `partyName` varchar(32) DEFAULT NULL,
+            `partyKey` varchar(32) DEFAULT NULL,
+            INDEX(`partyKey`)
             PRIMARY KEY (`partyId`) USING BTREE
             );";
         $db->query($sql);
@@ -45,6 +54,7 @@ function rsvp_database_v1_upgrade($db)
             `songRequest` varchar(255) DEFAULT NULL,
             `attendanceNotes` varchar(2048) NULL,
             `partyId` int(11) DEFAULT NULL,
+            INDEX(`firstName`, `lastName`, `attendeeId`, `partyId`)
             PRIMARY KEY (`attendeeId`),
             CONSTRAINT `fk_wp_rsvp_parties` FOREIGN KEY (`partyId`) REFERENCES `$partyTblName`(`partyId`) ON DELETE SET NULL );";
 

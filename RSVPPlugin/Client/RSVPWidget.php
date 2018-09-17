@@ -1,7 +1,7 @@
 <?php
-require_once '../RSVPDatabase.php';
-require_once '../RSVPConfig.php';
-require_once 'RSVPWidgetModel.php';
+require_once( __DIR__.'\..\RSVPDatabase.php' );
+require_once( __DIR__.'\..\RSVPConfig.php' );
+require_once( 'RSVPWidgetModel.php' );
 
 function rsvp_widget_has_errors( $errors )
 {
@@ -610,7 +610,7 @@ function rsvp_widget_process_action_recursive($request)
     return rsvp_widget_process_action_recursive($request);
 }
 
-function rsvp_widget_inject_client_scripts()
+function rsvp_widget_inject_scripts()
 {
     wp_enqueue_style( 'w3_css_4' );
     wp_enqueue_style( 'font_awesome_5_3_1' );
@@ -620,5 +620,5 @@ function rsvp_widget_register( $shortcode )
 {
     add_shortcode( $shortcode, 'rsvp_widget_render_plugin' );
 
-    add_action( 'wp_enqueue_scripts', 'rsvp_widget_inject_client_scripts' );
+    add_action( 'wp_enqueue_scripts', 'rsvp_widget_inject_scripts' );
 }

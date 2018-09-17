@@ -1,9 +1,83 @@
 <?php
 require_once( "RSVPConfig.php" );
 
+function rsvp_database_get_attendees_attending()
+{
+    global $wpdb;
+    $attendeesTable = RSVPConfig::DB_TABLE_NAME_ATTENDEES;
+    return $wpdb->get_results(
+            "SELECT `firstName`,
+            `lastName`,
+            `street`,
+            `city`,
+            `postcode`,
+            `attendeeId`,
+            `attendance`,
+            `attendanceNotes`,
+            `beverageOptions`,
+            `dietaryReqs`,
+            `email`,
+            `mealOptions`,
+            `otherDietaryReqs`,
+            `phone`,
+            `songRequest`
+            FROM `$attendeesTable`
+            WHERE `attendance` = 1"
+    );        
+}
+
+function rsvp_database_get_attendees_not_attending()
+{
+    global $wpdb;
+    $attendeesTable = RSVPConfig::DB_TABLE_NAME_ATTENDEES;
+    return $wpdb->get_results(
+            "SELECT `firstName`,
+            `lastName`,
+            `street`,
+            `city`,
+            `postcode`,
+            `attendeeId`,
+            `attendance`,
+            `attendanceNotes`,
+            `beverageOptions`,
+            `dietaryReqs`,
+            `email`,
+            `mealOptions`,
+            `otherDietaryReqs`,
+            `phone`,
+            `songRequest`
+            FROM `$attendeesTable`
+            WHERE `attendance` = 0"
+    );        
+}
+
+function rsvp_database_get_attendees_no_response()
+{
+    global $wpdb;
+    $attendeesTable = RSVPConfig::DB_TABLE_NAME_ATTENDEES;
+    return $wpdb->get_results(
+            "SELECT `firstName`,
+            `lastName`,
+            `street`,
+            `city`,
+            `postcode`,
+            `attendeeId`,
+            `attendance`,
+            `attendanceNotes`,
+            `beverageOptions`,
+            `dietaryReqs`,
+            `email`,
+            `mealOptions`,
+            `otherDietaryReqs`,
+            `phone`,
+            `songRequest`
+            FROM `$attendeesTable`
+            WHERE `attendance` IS NULL"
+    );        
+}
+
 function rsvp_database_get_associated_attendees_details_by_id( $attendeeId )
 {
-    
     global $wpdb;
     $attendeesTable = RSVPConfig::DB_TABLE_NAME_ATTENDEES;
     return $wpdb->get_results(
