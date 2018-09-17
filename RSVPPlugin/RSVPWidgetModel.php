@@ -131,7 +131,7 @@ class RSVPWidgetModel
 
         if( isset($_REQUEST['firstName']) )
         {
-            $model->SetFirstName($_REQUEST['firstName']);
+            $model->SetFirstName( trim( $_REQUEST['firstName'] ) );
         }
         
         if( isset($_REQUEST['selectedAttendee']) )
@@ -150,7 +150,7 @@ class RSVPWidgetModel
 
         if( isset($_REQUEST['lastName']) )
         {
-            $model->SetLastName($_REQUEST['lastName']);
+            $model->SetLastName( trim ( $_REQUEST['lastName'] ) );
         }
 
         if( isset($_REQUEST['accessToken']) )
@@ -169,62 +169,62 @@ class RSVPWidgetModel
 
         if( isset($_REQUEST['attendance']) )
         {
-            $model->SetAttendance($_REQUEST['attendance']);
+            $model->SetAttendance( trim ( $_REQUEST['attendance'] ) );
         }
 
         if( isset($_REQUEST['attendanceNotes']) )
         {
-            $model->SetAttendanceNotes($_REQUEST['attendanceNotes']);
+            $model->SetAttendanceNotes( trim ( $_REQUEST['attendanceNotes'] ) );
         }
         
         if( isset($_REQUEST['street']) )
         {
-            $model->SetStreetAddress($_REQUEST['street']);
+            $model->SetStreetAddress( trim ( $_REQUEST['street'] ) );
         }
 
         if( isset($_REQUEST['postcode']) )
         {
-            $model->SetPostcode($_REQUEST['postcode']);
+            $model->SetPostcode( trim ( $_REQUEST['postcode'] ) );
         }
 
         if( isset($_REQUEST['city']) )
         {
-            $model->SetCity($_REQUEST['city']);
+            $model->SetCity( trim ( $_REQUEST['city'] ) );
         }
 
         if( isset($_REQUEST['email']) )
         {
-            $model->SetEmail($_REQUEST['email']);
+            $model->SetEmail( trim ( $_REQUEST['email'] ) );
         }
 
         if( isset($_REQUEST['phone']) )
         {
-            $model->SetPhone($_REQUEST['phone']);
+            $model->SetPhone( trim ( $_REQUEST['phone'] ) );
         }
 
         if( isset($_REQUEST['beverageOptions']) )
         {
-            $model->SetBeverageOption($_REQUEST['beverageOptions']);
+            $model->SetBeverageOption( trim ( $_REQUEST['beverageOptions'] ) );
         }
 
         if( isset($_REQUEST['mealOptions']) )
         {
-            $model->SetMealOption($_REQUEST['mealOptions']);
+            $model->SetMealOption( trim ( $_REQUEST['mealOptions'] ) );
         }
 
         if( isset($_REQUEST['dietaryReqs']) )
         {
-            $model->SetDietaryRequirement($_REQUEST['dietaryReqs']);
+            $model->SetDietaryRequirement( trim ( $_REQUEST['dietaryReqs'] ) );
         }
 
         if( isset($_REQUEST['otherDietaryReqs']) )
         {
-            $model->SetOtherDietaryRequirement($_REQUEST['otherDietaryReqs']);
+            $model->SetOtherDietaryRequirement( trim ( $_REQUEST['otherDietaryReqs'] ) );
         }
 
         if( isset($_REQUEST['songRequest']) )
         {
-            $model->SetSongRequest($_REQUEST['songRequest']);
+            $model->SetSongRequest( trim ( $_REQUEST['songRequest'] ) );
         }
 
         return $model;

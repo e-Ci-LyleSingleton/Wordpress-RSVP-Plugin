@@ -3,7 +3,7 @@ foreach ( $errors as $key => $value )
 { ?>
     <div class="w3-panel w3-pale-red w3-leftbar w3-border-red">
         <p>
-            <?php print( $value ); ?>
+            <?php print( htmlentities( $value ) ); ?>
         </p>
     </div>
 <?php
@@ -12,7 +12,7 @@ foreach ( $successes as $key => $value )
 { ?>
     <div class="w3-panel w3-pale-green w3-leftbar w3-border-green">
         <p>
-            <?php print( $value ); ?>
+            <?php print( htmlentities( $value ) ); ?>
         </p>
     </div>
 <?php
@@ -29,8 +29,8 @@ foreach ( $successes as $key => $value )
 		<input class="w3-button w3-large w3-blue" type="submit" value="Please indicate you attendance"/>
 		<input type="hidden" name="action" value="validate-attend" />
 		<!-- Mathew, fuck off. I know that this isn't very secure! -->
-		<input type="hidden" name="accessToken" value="<?php print( $accessToken ); ?>" />
-		<input type="hidden" name="authCtx" value="<?php print( $authCtx ); ?>" />
+		<input type="hidden" name="accessToken" value="<?php print( htmlentities( $accessToken ) ); ?>" />
+		<input type="hidden" name="authCtx" value="<?php print( htmlentities( $authCtx ) ); ?>" />
 
 		<?php wp_nonce_field( $nonceAction, $nonceName );
 	?>

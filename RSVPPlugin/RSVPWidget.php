@@ -9,29 +9,53 @@ function rsvp_widget_has_errors( $errors )
 
 function rsvp_widget_apply_attendee_details_to_request( $attendeeDetails, $request )
 {
-    $request->SetAttendance( 
-        rsvp_database_coerce_tristate_to_string_or_empty( 
-            $attendeeDetails['attendance'] ) );
-
-    $request->SetAttendeeId( rsvp_database_coerce_null_to_string( $attendeeDetails['attendeeId'] ) );
-    $request->SetFirstName( rsvp_database_coerce_null_to_string( $attendeeDetails['firstName'] ) );
-    $request->SetLastName( rsvp_database_coerce_null_to_string( $attendeeDetails['lastName'] ) );
+    $request->SetAttendance( rsvp_database_coerce_null_to_string( $attendeeDetails->attendance ) );
+    $request->SetAttendeeId( rsvp_database_coerce_null_to_string( $attendeeDetails->attendeeId ) );
+    $request->SetFirstName( stripslashes ( rsvp_database_coerce_null_to_string( $attendeeDetails->firstName ) ) );
+    $request->SetLastName( stripslashes ( rsvp_database_coerce_null_to_string( $attendeeDetails->lastName ) ) );
     rsvp_widget_apply_contact_details_to_request( $attendeeDetails, $request );
-    $request->SetMealOption( rsvp_database_coerce_null_to_string( $attendeeDetails['mealOptions'] ) );
-    $request->SetBeverageOption( rsvp_database_coerce_null_to_string( $attendeeDetails['beverageOptions'] ) );
-    $request->SetDietaryRequirement( rsvp_database_coerce_null_to_string( $attendeeDetails['dietaryReqs'] ) );
-    $request->SetOtherDietaryRequirement( rsvp_database_coerce_null_to_string( $attendeeDetails['otherDietaryReqs'] ) );
-    $request->SetSongRequest( rsvp_database_coerce_null_to_string( $attendeeDetails['songRequest'] ) );
-    $request->SetAttendanceNotes( rsvp_database_coerce_null_to_string( $attendeeDetails['attendanceNotes'] ) );
+    $request->SetMealOption( stripslashes ( rsvp_database_coerce_null_to_string( $attendeeDetails->mealOptions ) ) );
+    $request->SetBeverageOption( stripslashes ( rsvp_database_coerce_null_to_string( $attendeeDetails->beverageOptions ) ) );
+    $request->SetDietaryRequirement( stripslashes ( rsvp_database_coerce_null_to_string( $attendeeDetails->dietaryReqs ) ) );
+    $request->SetOtherDietaryRequirement( stripslashes ( rsvp_database_coerce_null_to_string( $attendeeDetails->otherDietaryReqs ) ) );
+    $request->SetSongRequest( stripslashes ( rsvp_database_coerce_null_to_string( $attendeeDetails->songRequest ) ) );
+    $request->SetAttendanceNotes( stripslashes ( rsvp_database_coerce_null_to_string( $attendeeDetails->attendanceNotes ) ) );
 }
 
 function rsvp_widget_apply_contact_details_to_request( $attendeeDetails, $request )
 {
-    $request->SetEmail( rsvp_database_coerce_null_to_string( $attendeeDetails['email'] ) );
-    $request->SetPhone( rsvp_database_coerce_null_to_string( $attendeeDetails['phone'] ) );
-    $request->SetStreetAddress( rsvp_database_coerce_null_to_string( $attendeeDetails['street'] ) );
-    $request->SetCity( rsvp_database_coerce_null_to_string( $attendeeDetails['city'] ) );
-    $request->SetPostcode( rsvp_database_coerce_null_to_string( $attendeeDetails['postcode'] ) );
+    $request->SetEmail( stripslashes ( rsvp_database_coerce_null_to_string( $attendeeDetails->email ) ) );
+    $request->SetPhone( stripslashes ( rsvp_database_coerce_null_to_string( $attendeeDetails->phone ) ) );
+    $request->SetStreetAddress( stripslashes ( rsvp_database_coerce_null_to_string( $attendeeDetails->street ) ) );
+    $request->SetCity( stripslashes ( rsvp_database_coerce_null_to_string( $attendeeDetails->city ) ) );
+    $request->SetPostcode( stripslashes ( rsvp_database_coerce_null_to_string( $attendeeDetails->postcode ) ) );
+}
+
+function rsvp_widget_request_to_attendee_details( $request )
+{
+    $attendeeDetails = array();
+    $attendeeDetails['attendeeId'] = $request->GetAttendeeId();
+    $attendeeDetails['attendance'] = 'NULL';
+    $attendance = $request->GetAttendance();
+    if( $attendance === '1' || $attendance === '0' )
+    {
+        $attendeeDetails['attendance'] = $attendance;
+    }
+    $attendeeDetails['firstName'] = $request->GetFirstName();
+    $attendeeDetails['lastName'] = $request->GetLastName();
+    $attendeeDetails['attendance'] = $request->GetAttendance();
+    $attendeeDetails['email'] = $request->GetEmail();
+    $attendeeDetails['phone'] = $request->GetPhone();
+    $attendeeDetails['street'] = $request->GetStreetAddress();
+    $attendeeDetails['city'] = $request->GetCity();
+    $attendeeDetails['postcode'] = $request->GetPostcode();
+    $attendeeDetails['beverageOptions'] = $request->GetBeverageOption();
+    $attendeeDetails['mealOptions'] = $request->GetMealOption();
+    $attendeeDetails['dietaryReqs'] = $request->GetDietaryRequirement();
+    $attendeeDetails['otherDietaryReqs'] = $request->GetOtherDietaryRequirement();
+    $attendeeDetails['songRequest'] = $request->GetSongRequest();
+    $attendeeDetails['attendanceNotes'] = $request->GetAttendanceNotes();
+    return $attendeeDetails;
 }
 
 function rsvp_widget_render_plugin() {
@@ -76,7 +100,7 @@ function rsvp_widget_preauth_validate( $request )
         if( $matchCount == 1 )
         {
             rsvp_widget_apply_attendee_details_to_request( $matchingAttendees[0], $request );
-            $request->SetAuthId( rsvp_database_coerce_null_to_string( $matchingAttendees[0]['attendeeId'] ) );
+            $request->SetAuthId( rsvp_database_coerce_null_to_string( $matchingAttendees[0]->attendeeId ) );
         }
         else if( $matchCount == 0 )
         {
@@ -150,7 +174,7 @@ function rsvp_widget_attendance_validate( $request )
             $request->SetError('beverageOptions', 'Please indicate your choice of refreshments');
         }
         
-        if( !( $request->GetMealOption() == 'adult' || $request->GetMealOption() == 'kids' ) )
+        if( !( $request->GetMealOption() == 'adult' || $request->GetMealOption() == 'child' ) )
         {
             $request->SetError('mealOptions', 'Please indicate your choice of meal options');
         }
@@ -179,7 +203,9 @@ function rsvp_widget_attendance_validate( $request )
    
     if( !rsvp_widget_has_errors( $request->GetErrors() ) )
     {
-        if( !rsvp_database_update_attendees_details_by_id( $request->GetAttendeeId(), $request ) )
+        if( !rsvp_database_update_attendees_details_by_id( 
+            $request->GetAttendeeId(), 
+            rsvp_widget_request_to_attendee_details( $request ) ) )
         {
             $request->SetError('internalError', 'An internal server error has occured. You can thank Lyle for that :)');
         };
@@ -249,8 +275,8 @@ function rsvp_widget_render_party_member_select_from_request( $request )
     $associatedAttendees = rsvp_database_get_associated_attendees_details_by_id( $request->GetAuthId() );
     foreach ($associatedAttendees as &$attendee) {
         $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
-        $authCtx = base64_encode( openssl_encrypt( $attendee['attendeeId'], 'aes-256-cbc', RSVPConfig::CIPHER_KEY, 0, $iv ) . '::' . $iv);
-        $attendee['authCtx'] = $authCtx;
+        $authCtx = base64_encode( openssl_encrypt( $attendee->attendeeId, 'aes-256-cbc', RSVPConfig::CIPHER_KEY, 0, $iv ) . '::' . $iv);
+        $attendee = (object) array_merge( (array)$attendee, array( 'authCtx' => $authCtx ) );
     }
     $request->SetAssociatedAttendees( $associatedAttendees );
     
@@ -278,6 +304,11 @@ function rsvp_widget_process_apply_contact_details( $request )
     {
         $request->SetError('sessiontoken', 'Your session has expired');
     }
+
+    if( $request->GetAuthId() == $request->GetAttendeeId() )
+    {
+        $request->SetError('authCtx', 'You cannot apply your own contact details to yourself, silly!');
+    }
     
     if( !rsvp_widget_has_errors( $request->GetErrors() ) )
     {
@@ -288,11 +319,11 @@ function rsvp_widget_process_apply_contact_details( $request )
 
         foreach ($associatedAttendees as $attendee)
         {
-            if( $attendee['attendeeId'] == $request->GetAttendeeId() )
+            if( $attendee->attendeeId == $request->GetAttendeeId() )
             {
                 $attendeeDetails = $attendee;
             }
-            else if( $attendee['attendeeId'] == $request->GetAuthId() )
+            else if( $attendee->attendeeId == $request->GetAuthId() )
             {
                 $currentUserAttendanceDetails = $attendee;
             }
@@ -308,14 +339,13 @@ function rsvp_widget_process_apply_contact_details( $request )
 
         if( $currentUserAttendanceDetails === null || $attendeeDetails === null )
         {
-            if( !$matchFound )
-            {
-                $request->SetError('authCtx', 'Your session has expired');
-            }
+            $request->SetError('authCtx', 'Your session has expired');
         }
         else 
         {
-            if( !rsvp_database_update_attendees_details_by_id( $request->GetAttendeeId(), $request ) )
+            if( !rsvp_database_update_attendees_details_by_id( 
+                $request->GetAttendeeId(), 
+                rsvp_widget_request_to_attendee_details( $request ) ) )
             {
                 $request->SetError('internalError', 'An internal server error has occured. You can thank Lyle for that :)');
             };
@@ -359,7 +389,7 @@ function rsvp_widget_process_party_member_select( $request )
         $previousRequest = $request;
         foreach ($associatedAttendees as $attendee)
         {
-            if( $attendee['attendeeId'] == $request->GetAttendeeId() )
+            if( $attendee->attendeeId == $request->GetAttendeeId() )
             {
                 $matchFound = true;
                 rsvp_widget_apply_attendee_details_to_request( $attendee, $request );
@@ -388,7 +418,7 @@ function rsvp_widget_process_party_all_done( $request )
         $previousRequest = $request;
         foreach ($associatedAttendees as $attendee)
         {
-            if( $attendee['attendeeId'] == $request->GetAuthId() )
+            if( $attendee->attendeeId == $request->GetAuthId() )
             {
                 $matchFound = true;
                 rsvp_widget_apply_attendee_details_to_request( $attendee, $request );
@@ -448,7 +478,7 @@ function rsvp_widget_process_action_recursive($request)
                 $request->SetSuccess( 'attendee', 'Your changes have been saved' );
                 $associatedAttendees = rsvp_database_count_associated_attendees_details_by_id( $request->GetAttendeeId() );
 
-                if( $associatedAttendees['count'] > 1 )
+                if( $associatedAttendees[0]->count > 1 )
                 {
                     $request->SetAction(RSVPWidgetState::SelectPartyMember);
                 }

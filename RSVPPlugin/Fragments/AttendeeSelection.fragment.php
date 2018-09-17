@@ -28,12 +28,12 @@ foreach ( $successes as $key => $value )
 	{ 
 		$attendingText = 'no response yet';
 		$iconClass = 'fa-user-secret w3-light-grey';
-		if( $attendee['attendance'] === true )
+		if( $attendee->attendance === '1' )
 		{
 			$attendingText = 'attending';
 			$iconClass = 'fa-user-plus w3-pale-green';
 		}
-		else if( $attendee['attendance'] === false )
+		else if( $attendee->attendance === '0' )
 		{
 			$attendingText = 'not attending';
 			$iconClass = 'fa-user-minus w3-pale-red';
@@ -44,12 +44,16 @@ foreach ( $successes as $key => $value )
 				<i class="fa fa-3x <?php print( $iconClass ); ?>" style="width: 100px;"></i>
 			</div>
 			<div class="w3-bar-item">
-				<span class="w3-xlarge"><?php print( $attendee['firstName'] . ' ' . $attendee['lastName'] ); ?></span><br>
+				<span class="w3-xlarge"><?php print( $attendee->firstName . ' ' . $attendee->lastName ); ?></span><br>
 				<span><?php print( $attendingText ); ?></span>
 			</div>
 			<div class="w3-bar-item w3-right">
-				<button class="w3-button w3-medium w3-white w3-border w3-green-border" onclick="applyAuthCtx('<?php print( $attendee['authCtx'] ); ?>');">Review attendance</button>
-				<button class="w3-button w3-medium w3-white w3-border w3-green-border" onclick="applyAuthCtx('<?php print( $attendee['authCtx'] ); ?>');applyAction('validate-apply-contact-details')">Use my contact details</button>
+				<button class="w3-button w3-medium w3-white w3-border w3-green-border" onclick="applyAuthCtx('<?php print( htmlentities( $attendee->authCtx ) ); ?>');">Review attendance</button>
+				<?php 
+				if( !false )
+				{ ?>
+				<button class="w3-button w3-medium w3-white w3-border w3-green-border" onclick="applyAuthCtx('<?php print( htmlentities( $attendee->authCtx ) ); ?>');applyAction('validate-apply-contact-details')">Apply my contact details</button><?php
+				} ?>
 			</div>
 		</li>
 	<?php
@@ -60,9 +64,9 @@ foreach ( $successes as $key => $value )
 		<button class="w3-button w3-large w3-blue" onclick="applyAction('validate-alldone-party')" >All done!</button>
 	</p>
 		<input type="hidden" name="action" value="validate-partyselect" />
-		<input type="hidden" name="authCtx" value="<?php print( $authCtx ); ?>" />
+		<input type="hidden" name="authCtx" value="<?php print( htmlentities( $authCtx ) ); ?>" />
 		<!-- Mathew, fuck off. I know that this isn't very secure! -->
-		<input type="hidden" name="accessToken" value="<?php print( $accessToken ); ?>" />
+		<input type="hidden" name="accessToken" value="<?php print( htmlentities( $accessToken ) ); ?>" />
 
 		<?php wp_nonce_field( $nonceAction, $nonceName );
 	?>

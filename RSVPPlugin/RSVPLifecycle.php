@@ -5,7 +5,6 @@ require_once('RSVPConfig.php');
 function rsvp_lifecycle_register_plugin()
 {
     add_action('init', 'rsvp_lifecycle_init');
-    register_activation_hook(__FILE__, 'rsvp_lifecycle_on_activate');
 }
 
 function rsvp_lifecycle_init()
@@ -26,10 +25,11 @@ function rsvp_database_v1_upgrade($db)
         $db->query($sql);
     }
 
+    $partyTblName = RSVPConfig::DB_TABLE_NAME_PARTIES;
     $table = RSVPConfig::DB_TABLE_NAME_ATTENDEES;
     if ($db->get_var("SHOW TABLES LIKE '$table'") != $table) {
         $sql = "CREATE TABLE `$table` (
-            `attendeeId` int(11) NOT NULL AUTO_INCREMENT,
+            `attendeeId` int(11) NOT NULL AUTO_INCREMENT UNIQUE,
             `firstName` varchar(255) NOT NULL,
             `lastName` varchar(255) NOT NULL,
             `attendance` BIT(1) DEFAULT NULL,
@@ -44,12 +44,11 @@ function rsvp_database_v1_upgrade($db)
             `otherDietaryReqs` varchar(2048) NULL,
             `songRequest` varchar(255) DEFAULT NULL,
             `attendanceNotes` varchar(2048) NULL,
+            `partyId` int(11) DEFAULT NULL,
             PRIMARY KEY (`attendeeId`),
-            KEY `partyId` (`partyId`),
-            CONSTRAINT `fk_wp_rsvp_parties` FOREIGN KEY (`partyId`) REFERENCES `wp_rsvp_partyId` (`partyId`) ON DELETE SET NULL
-            );";
-        $db->query($sql);
+            CONSTRAINT `fk_wp_rsvp_parties` FOREIGN KEY (`partyId`) REFERENCES `$partyTblName`(`partyId`) ON DELETE SET NULL );";
 
+            $result = $db->query($sql);
     }
         
     // Fast forward to version 1
@@ -67,11 +66,11 @@ function rsvp_lifecycle_on_activate()
         case null:
             add_option(RSVPConfig::OPTION_NAME_CURRENT_DB_VERSION, "0");
         case '0':
-            rsvp_database_v1_upgrade( $wpdb );
         case '1':
+            rsvp_database_v1_upgrade( $wpdb );
             break;
         default:
-            throw "Unknown database version exception";
+            throw new Exception("Unknown database version exception");
             break;
     }
 }

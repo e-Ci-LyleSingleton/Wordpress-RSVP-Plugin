@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * @package rsvp
- * @author Swim or Die Software
- * @version 2.4.2
+ * @package wedding-rsvp
+ * @author Lyle Singleton
+ * @version 0.0.2
  */
 /*
  * Plugin Name: WeddingRSVP
@@ -22,6 +22,8 @@ require_once( 'RSVPPlugin/RSVPConfig.php' );
 require_once( 'RSVPPlugin/RSVPLifecycle.php' );
 require_once( 'RSVPPlugin/RSVPWidget.php' );
 
+
+register_activation_hook(__FILE__, 'rsvp_lifecycle_on_activate');
 rsvp_lifecycle_register_plugin();
 rsvp_widget_register( RSVPConfig::SHORTCODE_TAG );
 
