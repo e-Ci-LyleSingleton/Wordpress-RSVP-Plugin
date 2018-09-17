@@ -1,6 +1,7 @@
 <?php
+require_once '../RSVPDatabase.php';
+require_once '../RSVPConfig.php';
 require_once 'RSVPWidgetModel.php';
-require_once 'RSVPDatabase.php';
 
 function rsvp_widget_has_errors( $errors )
 {

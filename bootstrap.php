@@ -20,7 +20,7 @@
 
 require_once( 'RSVPPlugin/RSVPConfig.php' );
 require_once( 'RSVPPlugin/RSVPLifecycle.php' );
-require_once( 'RSVPPlugin/RSVPWidget.php' );
+require_once( 'RSVPPlugin/Client/RSVPWidget.php' );
 
 
 register_activation_hook(__FILE__, 'rsvp_lifecycle_on_activate');
