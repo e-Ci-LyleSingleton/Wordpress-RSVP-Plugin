@@ -3,7 +3,7 @@
  *
  * @package wedding-rsvp
  * @author Lyle Singleton
- * @version 0.0.2
+ * @version 0.0.3
  */
 /*
  * Plugin Name: WeddingRSVP
@@ -11,7 +11,7 @@
  * Plugin URI: http://wordpress.org/extend/plugins/weddingrsvp/
  * Description: This plugin allows guests to RSVP to a wedding but.
  * Author: Lyle Singleton
- * Version: 0.0.1
+ * Version: 0.0.3
  * Author URI: http://www.sineadandlylesingleton.com
  * License: GPL
  */
