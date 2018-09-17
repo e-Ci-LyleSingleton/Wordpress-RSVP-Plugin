@@ -1,6 +1,6 @@
 <?php
-require_once( __DIR__.'\..\RSVPDatabase.php' );
-require_once( __DIR__.'\..\RSVPConfig.php' );
+require_once( __DIR__.'/../RSVPDatabase.php' );
+require_once( __DIR__.'/../RSVPConfig.php' );
 require_once( 'Home.php' );
 require_once( 'Parties.php' );
 require_once( 'Individuals.php' );

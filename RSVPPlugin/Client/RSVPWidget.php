@@ -1,6 +1,6 @@
 <?php
-require_once( __DIR__.'\..\RSVPDatabase.php' );
-require_once( __DIR__.'\..\RSVPConfig.php' );
+require_once( __DIR__.'/../RSVPDatabase.php' );
+require_once( __DIR__.'/../RSVPConfig.php' );
 require_once( 'RSVPWidgetModel.php' );
 
 function rsvp_widget_has_errors( $errors )

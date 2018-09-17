@@ -1,6 +1,6 @@
 <?php
-require_once( __DIR__.'\..\RSVPDatabase.php' );
-require_once( __DIR__.'\..\RSVPConfig.php' );
+require_once( __DIR__.'/../RSVPDatabase.php' );
+require_once( __DIR__.'/../RSVPConfig.php' );
 
 function rsvp_admin_render_home( $errors, $successes, $attendees, $absentees, $awaiting )
 {
